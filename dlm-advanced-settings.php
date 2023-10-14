@@ -1,25 +1,34 @@
 <?php
-	/*
-		Plugin Name: Download Monitor - Advanced Settings
-		Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
-		Description: This plugin taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
-		Version: 1.0.0
-		Author: raldea89
-		Author URI: https://github.com/razvanaldea89/
-		License: GPL v3
-		This program is free software: you can redistribute it and/or modify
-		it under the terms of the GNU General Public License as published by
-		the Free Software Foundation, either version 3 of the License, or
-		(at your option) any later version.
-		This program is distributed in the hope that it will be useful,
-		but WITHOUT ANY WARRANTY; without even the implied warranty of
-		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-		GNU General Public License for more details.
-		You should have received a copy of the GNU General Public License
-		along with this program.  If not, see <http://www.gnu.org/licenses/>.
-	*/
+/*
+	Plugin Name: Download Monitor - Advanced Settings
+	Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
+	Description: This plugin taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
+	Version: 1.0.0
+	Author: raldea89
+	Author URI: https://github.com/razvanaldea89/
+	License: GPL v3
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
+/**
+ * The main class of the plugin
+ * 
+ * @since 1.0.0
+ */
 class DLM_Advanced_Settings {
 
 	/**
@@ -121,6 +130,36 @@ class DLM_Advanced_Settings {
 				'params'  => 1,
 				'type'    => 'checkbox',
 			),
+			'dlm_hotlink_protection'    => array(
+				'label'   => 'Enable Hotlink protection',
+				'default' => '0',
+				'params'  => 1,
+				'type'    => 'checkbox',
+			),
+			'dlm_allow_x_forwarded_for' => array(
+				'label'   => 'Allow Proxy IP Override',
+				'default' => '0',
+				'params'  => 1,
+				'type'    => 'checkbox',
+			),
+			'dlm_x_sendfile'            => array(
+				'label'   => 'Enable X-Accel-Redirect / X-Sendfile',
+				'default' => '0',
+				'params'  => 1,
+				'type'    => 'checkbox',
+			),
+			'dlm_timestamp_link'        => array(
+				'label'   => 'Show a timestamp in the download link',
+				'default' => '1',
+				'params'  => 1,
+				'type'    => 'checkbox',
+			),
+			'dlm_enable_reports'        => array(
+				'label'   => 'Enable reports',
+				'default' => '1',
+				'params'  => 1,
+				'type'    => 'checkbox',
+			),
 			'dlm_hide_meta_version'     => array(
 				'label'   => 'Hide meta version in header',
 				'default' => '0',
@@ -139,6 +178,24 @@ class DLM_Advanced_Settings {
 				'params'  => 1,
 				'type'    => 'checkbox',
 			),
+			'dlm_restricted_file_types' => array(
+				'label'   => 'Restricted file types',
+				'default' => '',
+				'params'  => 2,
+				'type'    => 'text',
+			),
+			'dlm_404_redirect'          => array(
+				'label'   => '404 redirect',
+				'default' => '',
+				'params'  => 1,
+				'type'    => 'text',
+			),
+			'dlm_placeholder_image_src' => array(
+				'label'   => 'Placeholder image src',
+				'default' => download_monitor()->get_plugin_url() . '/assets/images/placeholder.png',
+				'params'  => 1,
+				'type'    => 'text',
+			),
 			'dlm_reports_server_limits' => array(
 				'label'   => 'Reports server limits',
 				'default' => $this->php_info,
@@ -154,31 +211,6 @@ class DLM_Advanced_Settings {
 				'params'  => 1,
 				'type'    => 'multi_text',
 			),
-			'dlm_timestamp_link'        => array(
-				'label'   => 'Show a timestamp in the download link',
-				'default' => '1',
-				'params'  => 1,
-				'type'    => 'checkbox',
-			),
-			'dlm_restricted_file_types' => array(
-				'label'   => 'Restricted file types',
-				'default' => '',
-				'params'  => 2,
-				'type'    => 'text',
-			),
-			'dlm_enable_reports'        => array(
-				'label'   => 'Enable reports',
-				'default' => '1',
-				'params'  => 1,
-				'type'    => 'checkbox',
-			),
-			'dlm_404_redirect'          => array(
-				'label'   => '404 redirect',
-				'default' => '',
-				'params'  => 1,
-				'type'    => 'text',
-			),
-
 		);
 
 		$defaults = array();
@@ -187,7 +219,7 @@ class DLM_Advanced_Settings {
 		}
 
 		$this->settings = wp_parse_args( get_option( 'dlm-as-settings', array() ), $defaults );
-
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_filter( 'dlm_admin_menu_links', array( $this, 'add_submenu_page' ), 120 );
 		add_action( 'init', array( $this, 'set_hooks' ) );
 
@@ -207,6 +239,26 @@ class DLM_Advanced_Settings {
 
 		return self::$instance;
 
+	}
+
+	/**
+	 * Register settings
+	 *
+	 * @since 1.0.0
+	 */
+	public function register_settings() {
+		$group = 'dlm-as-settings';
+		register_setting( $group, $group );
+		foreach ( $this->hooks as $key => $setting ) {
+			add_settings_field(
+				$key,
+				$setting['label'],
+				'__return_false',
+				$group,
+				$group,
+				array( 'key' => $key )
+			);
+		}
 	}
 
 	/**
@@ -235,24 +287,24 @@ class DLM_Advanced_Settings {
 	 * @since 1.0.0
 	 */
 	public function render_submenu_page() {
-
-		if ( isset( $_POST['dlm-as-settings'] ) ) {
-			update_option( 'dlm-as-settings', $_POST['dlm-as-settings'] );
-		}
-
 		?>
-			<div class="wrap">
-				<h2>Advanced Settings</h2>
-				<form method="post"
-					  action="<?php echo admin_url( 'edit.php?post_type=dlm_download&page=dlm-advanced-settings' ); ?>">
+		<div class="wrap">
+			<h2><?php esc_html_e( 'Advanced Settings', 'dlm-advanced-settings' ); ?></h2>
+			<form method="post"
+				  action="options.php">
 				<?php
-					$html = '';
+				// Set our registered options
+				settings_fields( 'dlm-as-settings' );
+
+				$html = '<table class="form-table"><tbody>';
+				// Cycle through settings.
 				foreach ( $this->hooks as $hook => $option ) {
-					$html .= '<div class="dlm-as-setting">';
+					$html .= '<tr>';
 					switch ( $option['type'] ) {
 						case 'checkbox':
-							$html .= '<div class="wpchill-toggle">
-									<input class="wpchill-toggle__input" type="checkbox" name="dlm-as-settings[' . $hook . ']" value="1" ' . checked( $this->settings[ $hook ], '1', false ) . ' />
+							$html .= '<th scope="row"><label>' . esc_html( $option['label'] ) . '</label></th>';
+							$html .= '<td><div class="wpchill-toggle">
+									<input class="wpchill-toggle__input" type="checkbox" name="dlm-as-settings[' . esc_attr( $hook ) . ']" value="1" ' . checked( $this->settings[ $hook ], '1', false ) . ' />
 									<div class="wpchill-toggle__items">
 										<span class="wpchill-toggle__track"></span>
 										<span class="wpchill-toggle__thumb"></span>
@@ -265,31 +317,33 @@ class DLM_Advanced_Settings {
 											<path d="M0 0h2v6H0z"></path>
 										</svg>
 									</div>
-								</div>';
-							$html .= '<label>' . esc_html( $option['label'] ) . '</label>';
+								</div></td>';
 							break;
 						case 'text':
-							$html .= '<input type="text" name="dlm-as-settings[' . esc_attr( $hook ) . ']" value="' . esc_attr( $this->settings[ $hook ] ) . '" placeholder="' . esc_attr( $option['default'] ) . '" />';
-							$html .= '<label for="dlm-as-settings[' . esc_attr( $hook ) . ']">' . esc_html( $option['label'] ) . '</label>';
+							$html .= '<th scope="row"><label for="dlm-as-settings[' . esc_attr( $hook ) . ']">' . esc_html( $option['label'] ) . '</label></th>';
+							$html .= '<td><input type="text" name="dlm-as-settings[' . esc_attr( $hook ) . ']" value="' . esc_attr( $this->settings[ $hook ] ) . '" placeholder="' . esc_attr( $option['default'] ) . '" /></td>';
 							break;
 						case 'multi_text':
-							$html .= $option['label'] . '<br />';
+							$html .= '<th scope="row">' . esc_html( $option['label'] ) . '</th>';
+							$html .= '<td>';
 							foreach ( $option['default'] as $key => $value ) {
 								$html .= '<p>';
 								$html .= '<input type="text" name="dlm-as-settings[' . esc_attr( $hook ) . ' ][' . esc_attr( $key ) . ']" value="' . esc_attr( $this->settings[ $hook ][ $key ] ) . '" placeholder="' . esc_attr( $value ) . '" />';
 								$html .= '<label for="dlm-as-settings[' . esc_attr( $hook ) . ' ][' . esc_attr( $key ) . ']">' . esc_html( $key ) . '</label>';
 								$html .= '</p>';
 							}
+							$html .= '</td>';
 							break;
 					}
-					$html .= '</div>';
+					$html .= '</tr>';
 				}
-					echo $html;
+				$html .= '<tr><th scope="row">' . get_submit_button( 'Save Settings' ) . '</th><td></td></tr>';
+				$html .= '</tbody></table>';
+				echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				?>
-					<button type="submit">Save changes</button>
-				</form>
-			</div>
-			<?php
+			</form>
+		</div>
+		<?php
 	}
 
 	/**
@@ -300,12 +354,18 @@ class DLM_Advanced_Settings {
 	public function dlm_needed() {
 		// Add our WP Notice.
 		?>
-			<div class="error">
-				<p>
-					<strong>Download Monitor - Advanced Settings</strong> requires <strong>Download Monitor</strong> to
-					be installed and activated.
-				</p>
-			</div>
+		<div class="error">
+			<p>
+				<strong>
+					<?php
+					esc_html_e(
+						'Download Monitor - Advanced Settings requires Download Monitor to
+					be installed and activated.',
+						'dlm-advanced-settings'
+					);
+					?>
+			</p>
+		</div>
 		<?php
 	}
 
@@ -321,150 +381,22 @@ class DLM_Advanced_Settings {
 		if ( empty( $this->settings ) ) {
 			return;
 		}
+		require_once __DIR__ . '/class-dlm-as-hooks.php';
+		$hooks_class = DLM_AS_Hooks::get_instance( $this->settings );
 		// Cycle through settings.
 		foreach ( $this->settings as $key => $value ) {
 			if ( ! isset( $this->hooks[ $key ] ) ) {
 				continue;
 			}
-
+			// Set the required hook.
 			add_filter(
 				$key,
-				array( $this, 'filter_' . $key ),
+				array( $hooks_class, 'filter_' . $key ),
 				15,
 				$this->hooks[ $key ]['params']
 			);
 		}
 	}
-
-	/**
-	 * Filter for reports server limits
-	 *
-	 * @param array $value The default value.
-	 *
-	 * @return array
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_reports_server_limits( $value ) {
-
-		$value['retrieved_rows']        = $this->settings['dlm_reports_server_limits']['retrieved_rows'];
-		$value['retrieved_user_data']   = $this->settings['dlm_reports_server_limits']['retrieved_user_data'];
-		$value['retrieved_chart_stats'] = $this->settings['dlm_reports_server_limits']['retrieved_chart_stats'];
-		$value['max_execution_time']    = $this->settings['dlm_reports_server_limits']['max_execution_time'];
-		$value['memory_limit']          = $this->settings['dlm_reports_server_limits']['memory_limit'];
-
-		return $value;
-	}
-
-	/**
-	 * Filter for XHR progress bar
-	 *
-	 * @param array $value The default value.
-	 *
-	 * @return array
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_xhr_progress( $value ) {
-		$value['display']   = $this->settings['dlm_xhr_progress']['display'];
-		$value['animation'] = $this->settings['dlm_xhr_progress']['animation'];
-
-		return $value;
-	}
-
-	/**
-	 * Filter for 404 redirect
-	 *
-	 * @param string $value The default value.
-	 *
-	 * @return string
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_404_redirect( $value ) {
-		return $this->settings['dlm_404_redirect'];
-	}
-
-	/**
-	 * Filer for restricted file types
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return bool
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_restricted_file_types( $value ) {
-		return $this->settings['dlm_restricted_file_types'];
-	}
-
-	/**
-	 * Filter for Reports
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return bool
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_enable_reports( $value ) {
-		return isset( $this->settings['dlm_enable_reports'] ) && '1' === $this->settings['dlm_enable_reports'];
-	}
-
-	/**
-	 * Filter timestamp link
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return bool
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_timestamp_link( $value ) {
-		return isset( $this->settings['dlm_timestamp_link'] ) && '1' === $this->settings['dlm_timestamp_link'];
-	}
-
-	/**
-	 * Filter for XHR downloads
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return mixed
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_do_xhr( $value ) {
-		return isset( $this->settings['dlm_do_xhr'] ) && '1' === $this->settings['dlm_do_xhr'];
-	}
-
-	/**
-	 * Filter for meta version in header
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return bool
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_count_meta_downloads( $value ) {
-		return isset( $this->settings['dlm_count_meta_downloads'] ) && '1' === $this->settings['dlm_count_meta_downloads'];
-	}
-
-	/**
-	 * Filter for meta version in header
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return bool
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_hide_meta_version( $value ) {
-		return isset( $this->settings['dlm_hide_meta_version'] ) && '1' === $this->settings['dlm_hide_meta_version'];
-	}
-
-	/**
-	 * Filter for delete files when deleting a download
-	 *
-	 * @param bool $value The default value.
-	 *
-	 * @return bool
-	 * @since 1.0.0
-	 */
-	public function filter_dlm_delete_files( $value ) {
-		return isset( $this->settings['dlm_delete_files'] ) && '1' === $this->settings['dlm_delete_files'];
-	}
 }
 
-	add_action( 'plugins_loaded', array( 'DLM_Advanced_Settings', 'get_instance' ) );
+add_action( 'plugins_loaded', array( 'DLM_Advanced_Settings', 'get_instance' ) );
