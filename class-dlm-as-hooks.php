@@ -63,12 +63,13 @@ class DLM_AS_Hooks {
 		if ( empty( $this->settings['dlm_reports_server_limits'] ) ) {
 			return $value;
 		}
+
 		// Return the new options.
-		$value['retrieved_rows']        = $this->settings['dlm_reports_server_limits']['retrieved_rows'];
-		$value['retrieved_user_data']   = $this->settings['dlm_reports_server_limits']['retrieved_user_data'];
-		$value['retrieved_chart_stats'] = $this->settings['dlm_reports_server_limits']['retrieved_chart_stats'];
-		$value['max_execution_time']    = $this->settings['dlm_reports_server_limits']['max_execution_time'];
-		$value['memory_limit']          = $this->settings['dlm_reports_server_limits']['memory_limit'];
+		$value['retrieved_rows']        = ( ! empty( $this->settings['dlm_reports_server_limits']['retrieved_rows'] ) ) ? $this->settings['dlm_reports_server_limits']['retrieved_rows'] : $value['retrieved_rows'];
+		$value['retrieved_user_data']   = ( ! empty( $this->settings['dlm_reports_server_limits']['retrieved_user_data'] ) ) ? $this->settings['dlm_reports_server_limits']['retrieved_user_data'] : $value['retrieved_user_data'];
+		$value['retrieved_chart_stats'] = ( ! empty( $this->settings['dlm_reports_server_limits']['retrieved_chart_stats'] ) ) ? $this->settings['dlm_reports_server_limits']['retrieved_chart_stats'] : $value['retrieved_chart_stats'];
+		$value['max_execution_time']    = ( ! empty( $this->settings['dlm_reports_server_limits']['max_execution_time'] ) ) ? $this->settings['dlm_reports_server_limits']['max_execution_time'] : $value['max_execution_time'];
+		$value['memory_limit']          = ( ! empty( $this->settings['dlm_reports_server_limits']['memory_limit'] ) ) ? $this->settings['dlm_reports_server_limits']['memory_limit'] : $value['memory_limit'];
 
 		return $value;
 	}
@@ -87,9 +88,9 @@ class DLM_AS_Hooks {
 			return $value;
 		}
 		// Return the new options.
-		$value['display']   = $this->settings['dlm_xhr_progress']['display'];
-		$value['animation'] = $this->settings['dlm_xhr_progress']['animation'];
-
+		$value['display']   =  ! empty( $this->settings['dlm_xhr_progress']['display'] ) ? $this->settings['dlm_xhr_progress']['display'] : $value['display'];
+		$value['animation'] = ! empty( $this->settings['dlm_xhr_progress']['animation'] ) ? $this->settings['dlm_xhr_progress']['animation'] : $value['animation'];
+		
 		return $value;
 	}
 
@@ -103,11 +104,11 @@ class DLM_AS_Hooks {
 	 */
 	public function filter_dlm_404_redirect( $value ) {
 		// If the data from the setting is empty return the default value.
-		if ( empty( $this->settings['dlm_restricted_file_types'] ) ) {
+		if ( empty( $this->settings['dlm_404_redirect'] ) ) {
 			return $value;
 		}
 
-		// Return the 404 redirect URL
+		// Return the 404 redirect URL.
 		return $this->settings['dlm_404_redirect'];
 	}
 
@@ -121,20 +122,20 @@ class DLM_AS_Hooks {
 	 */
 	public function filter_dlm_placeholder_image_src( $value ) {
 		// If the data from the setting is empty return the default value.
-		if ( empty( $this->settings['dlm_restricted_file_types'] ) ) {
+		if ( empty( $this->settings['dlm_placeholder_image_src'] ) ) {
 			return $value;
 		}
 
-		// Return the image src used for the placeholder
+		// Return the image src used for the placeholder.
 		return $this->settings['dlm_placeholder_image_src'];
 	}
 
 	/**
 	 * Filer for restricted file types
 	 *
-	 * @param bool $value The default value.
+	 * @param array $value The default value.
 	 *
-	 * @return bool
+	 * @return array
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_restricted_file_types( array $value ) {
@@ -142,9 +143,11 @@ class DLM_AS_Hooks {
 		if ( empty( $this->settings['dlm_restricted_file_types'] ) ) {
 			return $value;
 		}
+		// The new files should be string with every file separated by a comma. Make an array from them.
+		$new_files = explode( ',', $this->settings['dlm_restricted_file_types'] );
 
-		// Setting is a string with file types separated by a comma (","), so we need to create an array from it.
-		return explode( ',', $this->settings['dlm_restricted_file_types'] );
+		// Send the merge between $value and $new_files.
+		return array_merge( $value, $new_files );
 	}
 
 	/**
@@ -156,7 +159,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_enable_reports( $value ) {
-		return isset( $this->settings['dlm_enable_reports'] ) && '1' === $this->settings['dlm_enable_reports'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_enable_reports'] ) && '1' === $this->settings['dlm_enable_reports'] ) {
+			return true;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -168,7 +176,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_timestamp_link( $value ) {
-		return isset( $this->settings['dlm_timestamp_link'] ) && '1' === $this->settings['dlm_timestamp_link'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_timestamp_link'] ) && '0' === $this->settings['dlm_timestamp_link'] ) {
+			return false;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -180,7 +193,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_do_xhr( $value ) {
-		return isset( $this->settings['dlm_do_xhr'] ) && '1' === $this->settings['dlm_do_xhr'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_do_xhr'] ) && '0' === $this->settings['dlm_do_xhr'] ) {
+			return false;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -192,7 +210,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_count_meta_downloads( $value ) {
-		return isset( $this->settings['dlm_count_meta_downloads'] ) && '1' === $this->settings['dlm_count_meta_downloads'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_count_meta_downloads'] ) && '0' === $this->settings['dlm_count_meta_downloads'] ) {
+			return false;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -216,7 +239,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_delete_files( $value ) {
-		return isset( $this->settings['dlm_delete_files'] ) && '1' === $this->settings['dlm_delete_files'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_delete_files'] ) && '1' === $this->settings['dlm_delete_files'] ) {
+			return true;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -228,7 +256,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_x_sendfile( $value ) {
-		return isset( $this->settings['dlm_x_sendfile'] ) && '1' === $this->settings['dlm_x_sendfile'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_x_sendfile'] ) && '1' === $this->settings['dlm_x_sendfile'] ) {
+			return true;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -240,7 +273,12 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_hotlink_protection( $value ) {
-		return isset( $this->settings['dlm_hotlink_protection'] ) && '1' === $this->settings['dlm_hotlink_protection'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_hotlink_protection'] ) && '1' === $this->settings['dlm_hotlink_protection'] ) {
+			return true;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -252,6 +290,11 @@ class DLM_AS_Hooks {
 	 * @since 1.0.0
 	 */
 	public function filter_dlm_allow_x_forwarded_for( $value ) {
-		return isset( $this->settings['dlm_allow_x_forwarded_for'] ) && '1' === $this->settings['dlm_allow_x_forwarded_for'];
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_allow_x_forwarded_for'] ) && '1' === $this->settings['dlm_allow_x_forwarded_for'] ) {
+			return true;
+		}
+
+		return $value;
 	}
 }

@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * The main class of the plugin
- * 
+ *
  * @since 1.0.0
  */
 class DLM_Advanced_Settings {
@@ -222,7 +222,7 @@ class DLM_Advanced_Settings {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_filter( 'dlm_admin_menu_links', array( $this, 'add_submenu_page' ), 120 );
 		add_action( 'init', array( $this, 'set_hooks' ) );
-
+		add_action( 'pre_update_option', array( $this, 'sanitize_settings' ), 15, 3 );
 	}
 
 	/**
@@ -238,7 +238,6 @@ class DLM_Advanced_Settings {
 		}
 
 		return self::$instance;
-
 	}
 
 	/**
@@ -291,9 +290,9 @@ class DLM_Advanced_Settings {
 		<div class="wrap">
 			<h2><?php esc_html_e( 'Advanced Settings', 'dlm-advanced-settings' ); ?></h2>
 			<form method="post"
-				  action="options.php">
+					action="options.php">
 				<?php
-				// Set our registered options
+				// Set our registered options.
 				settings_fields( 'dlm-as-settings' );
 
 				$html = '<table class="form-table"><tbody>';
@@ -396,6 +395,37 @@ class DLM_Advanced_Settings {
 				$this->hooks[ $key ]['params']
 			);
 		}
+	}
+
+	/**
+	 * Sanitize settings
+	 *
+	 * @param array $value The new value.
+	 * @param array $option     The option.
+	 * @param array $old_value    The old value.
+	 *
+	 * @return array
+	 * @since 1.0.0
+	 */
+	public function sanitize_settings( $value, $option, $old_value ) {
+		// If we're not dealing with our option, return the value.
+		if ( 'dlm-as-settings' !== $option ) {
+			return $value;
+		}
+		// Add '1' or '0' only to the checkbox values.
+		foreach ( $this->hooks as $key => $setting ) {
+			if ( 'checkbox' !== $setting['type'] ) {
+				continue;
+			}
+
+			if ( ! isset( $value[ $key ] ) ) {
+				$value[ $key ] = '0';
+			} else {
+				$value[ $key ] = '1';
+			}
+		}
+		// Return value.
+		return $value;
 	}
 }
 
