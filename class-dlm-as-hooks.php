@@ -145,7 +145,7 @@ class DLM_AS_Hooks {
 		}
 		// The new files should be string with every file separated by a comma. Make an array from them.
 		$new_files = explode( ',', $this->settings['dlm_restricted_file_types'] );
-
+	
 		// Send the merge between $value and $new_files.
 		return array_merge( $value, $new_files );
 	}
