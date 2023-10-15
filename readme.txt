@@ -1,4 +1,4 @@
-=== Download Monitor - Advanced Settings ===
+=== DLM - Advanced Settings ===
 Contributors: raldea89
 Tags: download monitor, filters, hooks, advanced settings
 Requires at least: 5.4

@@ -1,6 +1,6 @@
 <?php
 /*
-	Plugin Name: Download Monitor - Advanced Settings
+	Plugin Name: DLM - Advanced Settings
 	Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
 	Description: A lightweight plugin that taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
 	Version: 1.0.0
