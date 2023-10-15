@@ -1,7 +1,7 @@
 # Download Monitor Advanced Settings
 
 ## What does it do?
-This plugin is used to enhance the control of the Download Monitor plugin by tapping into its hooks. 
+This plugin is used to enhance the control of the Download Monitor plugin by tapping into its hooks. It taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
 
 ## What can be achieved?
 
