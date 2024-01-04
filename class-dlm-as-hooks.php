@@ -1,9 +1,16 @@
 <?php
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class DLM_AS_Hooks
+ * Handles all the hooks for the plugin
+ *
+ * @since 1.0.0
+ */
 class DLM_AS_Hooks {
 
 	/**
@@ -25,7 +32,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Constructor
 	 *
-	 * @param array $settings The settings.
+	 * @param  array  $settings  The settings.
 	 *
 	 * @since 1.0.0
 	 */
@@ -36,13 +43,12 @@ class DLM_AS_Hooks {
 	/**
 	 * Returns the singleton instance of the class.
 	 *
-	 * @param array $settings The settings.
+	 * @param  array  $settings  The settings.
 	 *
 	 * @return object The DLM_AS_Hooks object.
 	 * @since 1.0.0
 	 */
 	public static function get_instance( $settings ) {
-
 		if ( ! isset( self::$instance ) && ! ( self::$instance instanceof DLM_AS_Hooks ) ) {
 			self::$instance = new DLM_AS_Hooks( $settings );
 		}
@@ -53,7 +59,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for reports server limits
 	 *
-	 * @param array $value The default value.
+	 * @param  array  $value  The default value.
 	 *
 	 * @return array
 	 * @since 1.0.0
@@ -77,7 +83,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for XHR progress bar
 	 *
-	 * @param array $value The default value.
+	 * @param  array  $value  The default value.
 	 *
 	 * @return array
 	 * @since 1.0.0
@@ -88,16 +94,16 @@ class DLM_AS_Hooks {
 			return $value;
 		}
 		// Return the new options.
-		$value['display']   =  ! empty( $this->settings['dlm_xhr_progress']['display'] ) ? $this->settings['dlm_xhr_progress']['display'] : $value['display'];
+		$value['display']   = ! empty( $this->settings['dlm_xhr_progress']['display'] ) ? $this->settings['dlm_xhr_progress']['display'] : $value['display'];
 		$value['animation'] = ! empty( $this->settings['dlm_xhr_progress']['animation'] ) ? $this->settings['dlm_xhr_progress']['animation'] : $value['animation'];
-		
+
 		return $value;
 	}
 
 	/**
 	 * Filter for 404 redirect
 	 *
-	 * @param string $value The default value.
+	 * @param  string  $value  The default value.
 	 *
 	 * @return string
 	 * @since 1.0.0
@@ -115,7 +121,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for placeholder image src
 	 *
-	 * @param string $value The default value.
+	 * @param  string  $value  The default value.
 	 *
 	 * @return string
 	 * @since 1.0.0
@@ -133,7 +139,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filer for restricted file types
 	 *
-	 * @param array $value The default value.
+	 * @param  array  $value  The default value.
 	 *
 	 * @return array
 	 * @since 1.0.0
@@ -145,7 +151,7 @@ class DLM_AS_Hooks {
 		}
 		// The new files should be string with every file separated by a comma. Make an array from them.
 		$new_files = explode( ',', $this->settings['dlm_restricted_file_types'] );
-	
+
 		// Send the merge between $value and $new_files.
 		return array_merge( $value, $new_files );
 	}
@@ -153,7 +159,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for Reports
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -170,7 +176,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter timestamp link
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -187,7 +193,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for XHR downloads
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return mixed
 	 * @since 1.0.0
@@ -204,7 +210,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for meta version in header
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -221,7 +227,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for meta version in header
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -233,7 +239,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for delete files when deleting a download
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -250,7 +256,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for X-Accel-Redirect / X-Sendfile
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -267,7 +273,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for preventing hot linking
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0
@@ -284,7 +290,7 @@ class DLM_AS_Hooks {
 	/**
 	 * Filter for allowing proxy IP override
 	 *
-	 * @param bool $value The default value.
+	 * @param  bool  $value  The default value.
 	 *
 	 * @return bool
 	 * @since 1.0.0

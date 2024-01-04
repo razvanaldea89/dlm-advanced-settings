@@ -2,10 +2,10 @@
 Contributors: raldea89
 Tags: download monitor, filters, hooks, advanced settings
 Requires at least: 5.4
-Tested up to: 6.3
+Tested up to: 6.4
 Stable tag: 1.0.0
 License: GPLv3
-Text Domain: -
+Text Domain: dlm-advanced-settings
 Requires PHP: 7.0
 
 Download Monitor is a plugin for uploading and managing downloads, tracking downloads and displaying links.
