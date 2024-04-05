@@ -1,7 +1,7 @@
 {
   "name": "dlm-advanced-settings",
   "title": "Download Monitor - Advanced Settings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "",
   "main": "Gruntfile.js",
   "devDependencies": {

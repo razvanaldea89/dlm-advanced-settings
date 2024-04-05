@@ -3,7 +3,7 @@
 	Plugin Name: DLM - Advanced Settings
 	Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
 	Description: A lightweight plugin that taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
-	Version: 1.0.0
+	Version: 1.0.1
 	Author: raldea89
 	Author URI: https://github.com/razvanaldea89/
 	License: GPL v3
@@ -37,7 +37,7 @@ class DLM_Advanced_Settings {
 	 *
 	 * @since 1.0.0
 	 */
-	const VERSION = '1.0.0';
+	const VERSION = '1.0.1';
 
 	/**
 	 * Plugin instance
@@ -79,7 +79,7 @@ class DLM_Advanced_Settings {
 	private function __construct() {
 		// Check if Download Monitor is installed and activated.
 		if ( ! class_exists( 'WP_DLM' ) ) {
-			add_action( 'admin_notices', array( $this, 'dlm_needed_notice' ) );
+			add_action( 'admin_notices', array( $this, 'dlm_needed' ) );
 
 			return;
 		}

@@ -2,8 +2,8 @@
 Contributors: raldea89
 Tags: download monitor, filters, hooks, advanced settings
 Requires at least: 5.4
-Tested up to: 6.4
-Stable tag: 1.0.0
+Tested up to: 6.5
+Stable tag: 1.0.1
 License: GPLv3
 Text Domain: dlm-advanced-settings
 Requires PHP: 7.0
@@ -52,6 +52,8 @@ The manual installation method involves downloading the plugin and uploading it 
 * Activate the plugin from the Plugins menu within the WordPress admin.
 
 == Changelog ==
+= 1.0.1 =
+* Fixed: Method name for missing Download Monitor
 
 = 1.0.0 =
 * Plugin release.
