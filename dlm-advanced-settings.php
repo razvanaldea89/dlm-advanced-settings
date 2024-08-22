@@ -3,9 +3,10 @@
 	Plugin Name: DLM - Advanced Settings
 	Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
 	Description: A lightweight plugin that taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
-	Version: 1.0.1
-	Author: raldea89
-	Author URI: https://github.com/razvanaldea89/
+	Version: 1.0.2
+	Author: Razvan Aldea
+	Requires Plugins: download-monitor
+	Author URI: https://profiles.wordpress.org/raldea89/
 	License: GPL v3
 	Text Domain: dlm-advanced-settings
 	This program is free software: you can redistribute it and/or modify
@@ -37,7 +38,7 @@ class DLM_Advanced_Settings {
 	 *
 	 * @since 1.0.0
 	 */
-	const VERSION = '1.0.1';
+	const VERSION = '1.0.2';
 
 	/**
 	 * Plugin instance
@@ -70,6 +71,87 @@ class DLM_Advanced_Settings {
 	 * @since 1.0.0
 	 */
 	private $settings = array();
+
+	// Allow a comprehensive set of HTML tags, including markup and form elements
+	private $allowed_html = array(
+		'p'        => array(),
+		'strong'   => array(),
+		'a'        => array(
+			'href'  => array(),
+			'title' => array(),
+		),
+		'input'    => array(
+			'type'    => array(),
+			'name'    => array(),
+			'value'   => array(),
+			'class'   => array(),
+			'id'      => array(),
+			'checked' => array(),
+		),
+		'textarea' => array(
+			'name'  => array(),
+			'rows'  => array(),
+			'cols'  => array(),
+			'class' => array(),
+			'id'    => array(),
+		),
+		'select'   => array(
+			'name'  => array(),
+			'class' => array(),
+			'id'    => array(),
+		),
+		'option'   => array(
+			'value' => array(),
+		),
+		'label'    => array(
+			'for' => array(),
+		),
+		'span'     => array(
+			'class' => array(),
+			'id'    => array(),
+			'style' => array(),
+		),
+		'div'      => array(
+			'class' => array(),
+			'id'    => array(),
+			'style' => array(),
+		),
+		'img'      => array(
+			'src'    => array(),
+			'alt'    => array(),
+			'class'  => array(),
+			'id'     => array(),
+			'width'  => array(),
+			'height' => array(),
+		),
+		'ul'       => array(),
+		'ol'       => array(),
+		'li'       => array(),
+		'table'    => array(
+			'class' => array(),
+			'id'    => array(),
+		),
+		'tr'       => array(),
+		'td'       => array(
+			'colspan' => array(),
+			'rowspan' => array(),
+		),
+		'th'       => array(
+			'colspan' => array(),
+			'rowspan' => array(),
+		),
+		'thead'    => array(),
+		'tbody'    => array(),
+		'tfoot'    => array(),
+		'svg'      => array(
+			'width'       => array(),
+			'height'      => array(),
+			'aria-hidden' => array(),
+			'role'        => array(),
+			'focusable'   => array(),
+			'viewBox'     => array(),
+		),
+	);
 
 	/**
 	 * Constructor
@@ -369,7 +451,7 @@ class DLM_Advanced_Settings {
 				}
 				$html .= '<tr><th scope="row">' . get_submit_button( 'Save Settings' ) . '</th><td></td></tr>';
 				$html .= '</tbody></table>';
-				echo wp_kses_post( $html );
+				echo wp_kses( $html, $this->allowed_html );
 				?>
 			</form>
 		</div>
