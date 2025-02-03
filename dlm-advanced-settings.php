@@ -410,7 +410,7 @@ class DLM_Advanced_Settings {
 				</h2>
 			<p>
 			<?php
-				echo wp_kses_post( __( 'These are considered advanced setting. Each of it hooks onto a filter from Download Monitor and manipulates the result. These are used so that users won\'t have to add custom code to their theme\'s <code>functions.php</code> file.', 'dlm-advanced-settings' ) );
+				echo wp_kses_post( __( 'These settings are considered advanced. Each one hooks onto a filter from Download Monitor and manipulates the result. They are used so that users won\'t have to add custom code to their theme\'s <code>functions.php</code> file.', 'dlm-advanced-settings' ) );
 			?>
 				</p>
 			<form
