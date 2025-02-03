@@ -303,4 +303,38 @@ class DLM_AS_Hooks {
 
 		return $value;
 	}
+
+	/**
+	 * Remove admin upsells
+	 *
+	 * @param  bool  $value  The default value.
+	 *
+	 * @return bool
+	 * @since 1.0.3
+	 */
+	public function filter_dlm_remove_upsells( $value ) {
+		// IF setting is set return true.
+		if ( isset( $this->settings['dlm_remove_upsells'] ) && '1' === $this->settings['dlm_remove_upsells'] ) {
+			// Add custom CSS to hide the upsells.
+			add_action( 'admin_head', array( $this, 'hide_upsells' ) );
+			return true;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Hide upsells with custom CSS
+	 *
+	 * @since 1.0.3
+	 */
+	public function hide_upsells() {
+		?>
+		<style>
+			html body .wpchill-upsell  {
+				display: none !important;
+			}
+		</style>
+		<?php
+	}
 }

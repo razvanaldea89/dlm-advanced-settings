@@ -3,7 +3,7 @@
 	Plugin Name: DLM - Advanced Settings
 	Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
 	Description: A lightweight plugin that taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
-	Version: 1.0.2
+	Version: 1.0.3
 	Author: Razvan Aldea
 	Requires Plugins: download-monitor
 	Author URI: https://profiles.wordpress.org/raldea89/
@@ -38,7 +38,7 @@ class DLM_Advanced_Settings {
 	 *
 	 * @since 1.0.0
 	 */
-	const VERSION = '1.0.2';
+	const VERSION = '1.0.3';
 
 	/**
 	 * Plugin instance
@@ -207,6 +207,13 @@ class DLM_Advanced_Settings {
 		}
 
 		$this->hooks = array(
+			'dlm_remove_upsells' => array(
+				'label'       => __( 'Remove upsells', 'dlm-advanced-settings' ),
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Remove upsells from the Download Monitor admin settings pages.', 'dlm-advanced-settings' ),
+			),
 			'dlm_delete_files'          => array(
 				'label'       => __( 'Delete files when deleting a download', 'dlm-advanced-settings' ),
 				'default'     => '0',
@@ -292,7 +299,7 @@ class DLM_Advanced_Settings {
 				'description' => __( 'Define a custom URL for the Download CPT placeholder.', 'dlm-advanced-settings' ),
 			),
 			'dlm_reports_server_limits' => array(
-				'label'       => __( 'Reports server limits', 'dlm-advanced-access' ),
+				'label'       => __( 'Reports server limits', 'dlm-advanced-settings' ),
 				'default'     => $this->php_info,
 				'params'      => 1,
 				'type'        => 'multi_text',
@@ -396,10 +403,16 @@ class DLM_Advanced_Settings {
 		?>
 		<div
 			class="wrap">
-			<h2><?php
-				esc_html_e( 'Advanced Settings', 'dlm-advanced-settings' ); ?></h2>
-			<p><?php
-				echo wp_kses_post( __( 'These are considered advanced setting. Each of it hooks onto a filter from Download Monitor and manipulates the result. These are used so that users won\'t have to add custom code to their theme\'s <code>functions.php</code> file.', 'dlm-advanced-settings' ) ); ?></p>
+			<h2>
+			<?php
+				esc_html_e( 'Advanced Settings', 'dlm-advanced-settings' );
+			?>
+				</h2>
+			<p>
+			<?php
+				echo wp_kses_post( __( 'These are considered advanced setting. Each of it hooks onto a filter from Download Monitor and manipulates the result. These are used so that users won\'t have to add custom code to their theme\'s <code>functions.php</code> file.', 'dlm-advanced-settings' ) );
+			?>
+				</p>
 			<form
 				method="post"
 				action="options.php">
