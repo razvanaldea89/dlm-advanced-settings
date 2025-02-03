@@ -16,6 +16,7 @@ This plugin is used to enhance the control of the Download Monitor plugin by tap
 
 = Features =
 
+* hide upsells notifications and elements in the admin settings pages
 * hide the meta that consists of Download Monitor plugin version
 * disable the Reports
 * disable XHR downloading
