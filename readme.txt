@@ -1,9 +1,9 @@
 === DLM - Advanced Settings ===
 Contributors: raldea89
-Tags: download monitor, filters, hooks, advanced settings
+Tags: download monitor, filters, hooks, advanced settings, download monitor filters
 Requires at least: 5.4
-Tested up to: 6.7
-Stable tag: 1.0.3
+Tested up to: 6.8
+Stable tag: 1.0.4
 License: GPLv3
 Text Domain: dlm-advanced-settings
 Requires PHP: 7.4
@@ -53,6 +53,9 @@ The manual installation method involves downloading the plugin and uploading it 
 * Activate the plugin from the Plugins menu within the WordPress admin.
 
 == Changelog ==
+= 1.0.4 - 10.07.2025 =
+* Fixed: Text domain load error
+
 = 1.0.3 - 03.02.2025 =
 * Added: Option to remove upsells
 
