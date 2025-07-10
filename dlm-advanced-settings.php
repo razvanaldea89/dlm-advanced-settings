@@ -3,7 +3,7 @@
 	Plugin Name: DLM - Advanced Settings
 	Plugin URI: https://github.com/razvanaldea89/dlm-advanced-settings
 	Description: A lightweight plugin that taps into Download Monitor's hooks and offers a way to manipulate them via the admin panel.
-	Version: 1.0.3
+	Version: 1.0.4
 	Author: Razvan Aldea
 	Requires Plugins: download-monitor
 	Author URI: https://profiles.wordpress.org/raldea89/
@@ -38,7 +38,7 @@ class DLM_Advanced_Settings {
 	 *
 	 * @since 1.0.0
 	 */
-	const VERSION = '1.0.3';
+	const VERSION = '1.0.4';
 
 	/**
 	 * Plugin instance
@@ -206,124 +206,6 @@ class DLM_Advanced_Settings {
 			}
 		}
 
-		$this->hooks = array(
-			'dlm_remove_upsells' => array(
-				'label'       => __( 'Remove upsells', 'dlm-advanced-settings' ),
-				'default'     => '0',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Remove upsells from the Download Monitor admin settings pages.', 'dlm-advanced-settings' ),
-			),
-			'dlm_delete_files'          => array(
-				'label'       => __( 'Delete files when deleting a download', 'dlm-advanced-settings' ),
-				'default'     => '0',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Enabling this will let you automatically delete files associated with a Download upon the Download deletion', 'dlm-advanced-settings' ),
-			),
-			'dlm_hotlink_protection'    => array(
-				'label'       => __( 'Hotlink protection', 'dlm-advanced-settings' ),
-				'default'     => '0',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Enabling this will allow the download handler to check the PHP referer to see if it originated from your site and if not, redirect them to the homepage.', 'dlm-advanced-settings' ),
-			),
-			'dlm_allow_x_forwarded_for' => array(
-				'label'       => __( 'Allow Proxy IP Override', 'dlm-advanced-settings' ),
-				'default'     => '0',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'If enabled, Download Monitor will use the <code>X_FORWARDED_FOR</code> HTTP header set by proxies as the IP address. Note that anyone can set this header, making it less secure.', 'dlm-advanced-settings' ),
-			),
-			'dlm_x_sendfile'            => array(
-				'label'       => 'Enable X-Accel-Redirect / X-Sendfile',
-				'default'     => '0',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'If supported, <code>X-Accel-Redirect / X-Sendfile</code> can be used to serve downloads instead of PHP (server requires mod_xsendfile) Attention! Enabling this option will disable the XHR functionality!', 'dlm-advanced-settings' ),
-			),
-			'dlm_timestamp_link'        => array(
-				'label'       => __( 'Show a timestamp in the download link', 'dlm-advanced-settings' ),
-				'default'     => '1',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'If enabled, the download URL will have a timestamp attached as a parameter. This serves as a cache preventing solution for plugins that cache the URL.', 'dlm-advanced-settings' ),
-			),
-			'dlm_enable_reports'        => array(
-				'label'       => __( 'Enable reports', 'dlm-advanced-settings' ),
-				'default'     => '1',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Enable or disable the Reports functionality. This will also enable/disable logging detailed info into the Logs Table of the Database. Disabling this will not disable the download count funtionality.', 'dlm-advanced-settings' ),
-			),
-			'dlm_hide_meta_version'     => array(
-				'label'       => __( 'Hide meta version in header', 'dlm-advanced-settings' ),
-				'default'     => '0',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Hide or show Download Monitor\'s version in the HTML\'s head.', 'dlm-advanced-settings' ),
-			),
-			'dlm_count_meta_downloads'  => array(
-				'label'       => __( 'Add meta value to download count', 'dlm-advanced-settings' ),
-				'default'     => '1',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Add the manual download count ( the one set when editing a Download ) to the total download count of a Download', 'dlm-advanced-settings' ),
-			),
-			'dlm_do_xhr'                => array(
-				'label'       => __( 'XHR downloads', 'dlm-advanced-settings' ),
-				'default'     => '1',
-				'params'      => 1,
-				'type'        => 'checkbox',
-				'description' => __( 'Enable or disable downloading files using the newly XHR functionality. Disabling this may cause the reports to not be so pricise.', 'dlm-advanced-settings' ),
-			),
-			'dlm_restricted_file_types' => array(
-				'label'       => __( 'Restricted file types', 'dlm-advanced-settings' ),
-				'default'     => '',
-				'params'      => 2,
-				'type'        => 'text',
-				'description' => __( 'Define extra file types that should be restricted. Each file type needs to be separated by a comma (<code>,</code>). Only input the extension( ex.: txt, pdf ).', 'dlm-advanced-settings' ),
-			),
-			'dlm_404_redirect'          => array(
-				'label'       => __( '404 redirect URL', 'dlm-advanced-settings' ),
-				'default'     => '',
-				'params'      => 1,
-				'type'        => 'text',
-				'description' => __( 'Define a custom 404 redirect for when a Download can\'t be found.', 'dlm-advanced-settings' ),
-			),
-			'dlm_placeholder_image_src' => array(
-				'label'       => __( 'Placeholder image src', 'dlm-advanced-settings' ),
-				'default'     => download_monitor()->get_plugin_url() . '/assets/images/placeholder.png',
-				'params'      => 1,
-				'type'        => 'text',
-				'description' => __( 'Define a custom URL for the Download CPT placeholder.', 'dlm-advanced-settings' ),
-			),
-			'dlm_reports_server_limits' => array(
-				'label'       => __( 'Reports server limits', 'dlm-advanced-settings' ),
-				'default'     => $this->php_info,
-				'params'      => 1,
-				'type'        => 'multi_text',
-				'description' => __( 'Define other servet limits. Usefull when you have any problems with the Reports not being displayed a possible problem might be your server\'s lack of resources. This way you can control how much data is retrieved in one request.', 'dlm-advanced-settings' ),
-			),
-			'dlm_xhr_progress'          => array(
-				'label'       => __( 'XHR progress animation', 'dlm-advanced-settings' ),
-				'default'     => array(
-					'display'   => true,
-					'animation' => includes_url( '/images/spinner.gif' ),
-				),
-				'params'      => 1,
-				'type'        => 'multi_text',
-				'description' => __( 'Define whether to display the XHR progress or not. Also, define a custom URL for the loading animation.', 'dlm-advanced-settings' ),
-			),
-		);
-
-		$defaults = array();
-		foreach ( $this->hooks as $key => $setting ) {
-			$defaults[ $key ] = $setting['default'];
-		}
-
-		$this->settings = wp_parse_args( get_option( 'dlm-as-settings', array() ), $defaults );
-
 		$this->set_wp_hooks();
 	}
 
@@ -350,7 +232,8 @@ class DLM_Advanced_Settings {
 	private function set_wp_hooks() {
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_filter( 'dlm_admin_menu_links', array( $this, 'add_submenu_page' ), 120 );
-		add_action( 'init', array( $this, 'set_dlm_hooks' ) );
+		add_action( 'init', array( $this, 'set_default_hooks' ), 10 );
+		add_action( 'init', array( $this, 'set_dlm_hooks' ), 15 );
 		add_action( 'pre_update_option', array( $this, 'sanitize_settings' ), 15, 3 );
 	}
 
@@ -377,7 +260,7 @@ class DLM_Advanced_Settings {
 	/**
 	 * Add the submenu page to the Downloads menu
 	 *
-	 * @param  array  $links  The links array.
+	 * @param  array $links  The links array.
 	 *
 	 * @since 1.0.0
 	 */
@@ -526,9 +409,9 @@ class DLM_Advanced_Settings {
 	/**
 	 * Sanitize settings
 	 *
-	 * @param  array  $value      The new value.
-	 * @param  array  $option     The option.
-	 * @param  array  $old_value  The old value.
+	 * @param  array $value      The new value.
+	 * @param  array $option     The option.
+	 * @param  array $old_value  The old value.
 	 *
 	 * @return array
 	 * @since 1.0.0
@@ -553,6 +436,131 @@ class DLM_Advanced_Settings {
 
 		// Return value.
 		return $value;
+	}
+
+	/**
+	 * @return void
+     *
+     * @since 1.0.5 - moved the default hooks to a separate method
+	 */
+	public function set_default_hooks() {
+		$this->hooks = array(
+			'dlm_remove_upsells'        => array(
+				'label'       => __( 'Remove upsells', 'dlm-advanced-settings' ),
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Remove upsells from the Download Monitor admin settings pages.', 'dlm-advanced-settings' ),
+			),
+			'dlm_delete_files'          => array(
+				'label'       => __( 'Delete files when deleting a download', 'dlm-advanced-settings' ),
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Enabling this will let you automatically delete files associated with a Download upon the Download deletion', 'dlm-advanced-settings' ),
+			),
+			'dlm_hotlink_protection'    => array(
+				'label'       => __( 'Hotlink protection', 'dlm-advanced-settings' ),
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Enabling this will allow the download handler to check the PHP referer to see if it originated from your site and if not, redirect them to the homepage.', 'dlm-advanced-settings' ),
+			),
+			'dlm_allow_x_forwarded_for' => array(
+				'label'       => __( 'Allow Proxy IP Override', 'dlm-advanced-settings' ),
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'If enabled, Download Monitor will use the <code>X_FORWARDED_FOR</code> HTTP header set by proxies as the IP address. Note that anyone can set this header, making it less secure.', 'dlm-advanced-settings' ),
+			),
+			'dlm_x_sendfile'            => array(
+				'label'       => 'Enable X-Accel-Redirect / X-Sendfile',
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'If supported, <code>X-Accel-Redirect / X-Sendfile</code> can be used to serve downloads instead of PHP (server requires mod_xsendfile) Attention! Enabling this option will disable the XHR functionality!', 'dlm-advanced-settings' ),
+			),
+			'dlm_timestamp_link'        => array(
+				'label'       => __( 'Show a timestamp in the download link', 'dlm-advanced-settings' ),
+				'default'     => '1',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'If enabled, the download URL will have a timestamp attached as a parameter. This serves as a cache preventing solution for plugins that cache the URL.', 'dlm-advanced-settings' ),
+			),
+			'dlm_enable_reports'        => array(
+				'label'       => __( 'Enable reports', 'dlm-advanced-settings' ),
+				'default'     => '1',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Enable or disable the Reports functionality. This will also enable/disable logging detailed info into the Logs Table of the Database. Disabling this will not disable the download count funtionality.', 'dlm-advanced-settings' ),
+			),
+			'dlm_hide_meta_version'     => array(
+				'label'       => __( 'Hide meta version in header', 'dlm-advanced-settings' ),
+				'default'     => '0',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Hide or show Download Monitor\'s version in the HTML\'s head.', 'dlm-advanced-settings' ),
+			),
+			'dlm_count_meta_downloads'  => array(
+				'label'       => __( 'Add meta value to download count', 'dlm-advanced-settings' ),
+				'default'     => '1',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Add the manual download count ( the one set when editing a Download ) to the total download count of a Download', 'dlm-advanced-settings' ),
+			),
+			'dlm_do_xhr'                => array(
+				'label'       => __( 'XHR downloads', 'dlm-advanced-settings' ),
+				'default'     => '1',
+				'params'      => 1,
+				'type'        => 'checkbox',
+				'description' => __( 'Enable or disable downloading files using the newly XHR functionality. Disabling this may cause the reports to not be so pricise.', 'dlm-advanced-settings' ),
+			),
+			'dlm_restricted_file_types' => array(
+				'label'       => __( 'Restricted file types', 'dlm-advanced-settings' ),
+				'default'     => '',
+				'params'      => 2,
+				'type'        => 'text',
+				'description' => __( 'Define extra file types that should be restricted. Each file type needs to be separated by a comma (<code>,</code>). Only input the extension( ex.: txt, pdf ).', 'dlm-advanced-settings' ),
+			),
+			'dlm_404_redirect'          => array(
+				'label'       => __( '404 redirect URL', 'dlm-advanced-settings' ),
+				'default'     => '',
+				'params'      => 1,
+				'type'        => 'text',
+				'description' => __( 'Define a custom 404 redirect for when a Download can\'t be found.', 'dlm-advanced-settings' ),
+			),
+			'dlm_placeholder_image_src' => array(
+				'label'       => __( 'Placeholder image src', 'dlm-advanced-settings' ),
+				'default'     => download_monitor()->get_plugin_url() . '/assets/images/placeholder.png',
+				'params'      => 1,
+				'type'        => 'text',
+				'description' => __( 'Define a custom URL for the Download CPT placeholder.', 'dlm-advanced-settings' ),
+			),
+			'dlm_reports_server_limits' => array(
+				'label'       => __( 'Reports server limits', 'dlm-advanced-settings' ),
+				'default'     => $this->php_info,
+				'params'      => 1,
+				'type'        => 'multi_text',
+				'description' => __( 'Define other servet limits. Usefull when you have any problems with the Reports not being displayed a possible problem might be your server\'s lack of resources. This way you can control how much data is retrieved in one request.', 'dlm-advanced-settings' ),
+			),
+			'dlm_xhr_progress'          => array(
+				'label'       => __( 'XHR progress animation', 'dlm-advanced-settings' ),
+				'default'     => array(
+					'display'   => true,
+					'animation' => includes_url( '/images/spinner.gif' ),
+				),
+				'params'      => 1,
+				'type'        => 'multi_text',
+				'description' => __( 'Define whether to display the XHR progress or not. Also, define a custom URL for the loading animation.', 'dlm-advanced-settings' ),
+			),
+		);
+
+		$defaults = array();
+		foreach ( $this->hooks as $key => $setting ) {
+			$defaults[ $key ] = $setting['default'];
+		}
+
+		$this->settings = wp_parse_args( get_option( 'dlm-as-settings', array() ), $defaults );
 	}
 }
 
